@@ -1,7 +1,8 @@
+from idlelib.rpc import request_queue
 from lib2to3.fixes.fix_input import context
 
 from django.shortcuts import render, redirect
-from .models import Topic
+from .models import Topic, Entry
 from .forms import TopicForm, EntryForm
 
 
@@ -53,3 +54,23 @@ def new_entry(request, topic_id):
             return redirect('MyApp:topic', topic_id=topic_id)
     context = {'topic': topic, 'form': form}
     return render(request, 'myapp/new_entry.html', context)
+
+
+def edit_entry(request, entry_id):
+    """Edits an existing entry"""
+    entry = Entry.objects.get(id=entry_id)
+    topic = entry.topic
+
+    if request.method != "POST":
+        #the form is filled current data
+        form = EntryForm(instance=entry)
+    else:
+        #Sending data
+        form = EntryForm(instance=entry, data=request.POST)
+        if form.is_valid:
+            form.save()
+            return redirect('MyApp:topic', topic_id=topic.id)
+    context = {"topic": topic, "form": form, 'entry': entry}
+    return render(request, 'myapp/edit_entry.html', context=context)
+
+
