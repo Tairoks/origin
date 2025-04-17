@@ -2,7 +2,7 @@ from lib2to3.fixes.fix_input import context
 
 from django.shortcuts import render, redirect
 from .models import Topic
-from .forms import TopicForm
+from .forms import TopicForm, EntryForm
 
 
 def index (request):
@@ -35,3 +35,21 @@ def new_topic(request):
             return redirect('MyApp:topics')
     context = {'form': form}
     return render(request, 'myapp/new_topic.html', context)
+
+
+def new_entry(request, topic_id):
+    """Create entry"""
+    topic = Topic.objects.get(id=topic_id)
+    if request.method != 'POST':
+        # Data not sent, empty form created
+        form = EntryForm()
+    else:
+        # POST data sent, process data
+        form = EntryForm(data=request.POST)
+        if form.is_valid():
+            new_entry = form.save(commit=False)
+            new_entry.topic = topic
+            new_entry.save()
+            return redirect('MyApp:topic', topic_id=topic_id)
+    context = {'topic': topic, 'form': form}
+    return render(request, 'myapp/new_entry.html', context)
