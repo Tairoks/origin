@@ -8,6 +8,16 @@
 <p>
   <a href="{% url 'MyApp:index' %}">Learning log</a>
   <a href="{% url 'MyApp:topics' %}">Topics</a>
+    {% if user.is_authenticated %}
+    Hello, {{ user.username }}.
+    <form action="{% url 'users:logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit">log out</button>
+    </form>
+<!--    <a href="{% url 'users:logout' %}">log out</a>-->
+    {% else %}
+    <a href="{% url 'users:login' %}">log in</a>
+    {% endif %}
 </p>
 {% block content %}{% endblock content %}
 
