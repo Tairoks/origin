@@ -1,4 +1,3 @@
-from idlelib.rpc import request_queue
 from lib2to3.fixes.fix_input import context
 
 from django.shortcuts import render, redirect
@@ -72,5 +71,3 @@ def edit_entry(request, entry_id):
             return redirect('MyApp:topic', topic_id=topic.id)
     context = {"topic": topic, "form": form, 'entry': entry}
     return render(request, 'myapp/edit_entry.html', context=context)
-
-
